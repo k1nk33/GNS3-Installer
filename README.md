@@ -4,4 +4,4 @@ So this is my first attempt at a Bash scripting project and seeing as it is netw
 
 Included in the repo is the latest (as of most recent commit) source packages for GNS3, Dynamips and VPCS. This is pretty much only for testing purposes on my end as the script automatically retrieves this file upon execution.
 
-To run the script, make sure you are in the directory in which it is contained : run "ls" from the terminal to list the contents of the current directory. Then make it execuable by typing : "chmod u+x ./gns3-installer.sh". Now you can run the script with "sudo ./gns3-installer.sh" (sudo will prompt for your password which the script needs to install dependencies and create certain fils/directories).
+To run the script, make sure you are in the directory in which it is contained run "ls" from the terminal to list the contents of the current directory. Then make it execuable by typing "chmod u+x ./gns3-installer.sh". Now you can run the script with "sudo ./gns3-installer.sh" (sudo will prompt for your password which the script needs to install dependencies and create certain fils/directories).
