@@ -1,8 +1,9 @@
 Bash Project Year 3 - GNS3 Installer script for Ubuntu 14.04 and derivatives (Work In Progress)
 
-So this is my first attempt at a Bash scripting project and seeing as it is networking that I'm studying at the minute, I thought I could give back a little to new/future students on a similar trajectory to my own. GNS3 is without a doubt *THE* tool aspiring sys admins should be using to emulate/test/troubleshoot network topologies, at least IMO it is! I can't include any router images (something, something legal spegal) but I bet our mutual friend (Mr. Google) can help in that regard.
+So this is my first attempt at a Bash scripting project and seeing as it is networking that I'm studying at the minute, I thought I could give back a little 
+to new/future students on a similar trajectory to my own. GNS3 is without a doubt *THE* tool aspiring sys admins should be using to emulate/test/troubleshoot 
+network topologies, at least IMO it is! 
 
-Included in the repository is the latest (as of most recent commit) source packages for GNS3, Dynamips and VPCS. This is pretty much only for testing purposes on my end as the script automatically retrieves this file upon execution.
 
 [Running The Script]
 First off, open the terminal and create a new directory (name of your choosing) with "mkdir new_directory".
