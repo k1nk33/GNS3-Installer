@@ -11,13 +11,20 @@
 ###################### Check Requirements #########################
 ###################################################################
 
+# Set the start time
+start=$(date +%s)
+
 distro=$(lsb_release -a 2>/dev/null | grep Description | cut -f2)
 echo $distro
 # If it doesn't match requirements display error
 if [ "$distro" != "Ubuntu 14.04.1 LTS" ];then ###&& [ "$distro" != "Ubuntu 12.04.5 LTS" ];then
 	echo -e "\e[31m********* Error, Wrong Distro **********\e[0m "
 	sleep 1
-	echo # blank line
+	echo
+	end=$(date +%s)
+	runtime=$(($end-$start))
+	echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+	echo
 	echo -e "\e[31m****** Quitting script! ******\e[0m "
 	exit 0
 fi
@@ -63,26 +70,43 @@ echo
 echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
 read response
 
+# While loop to validate the response
+while true; do
+	# There has got to be an easier way of writing this!
+	# If the entry doesn't meet requirements, ask again.
+	if [ "$response" != "yes" -a "$response" != "YES" ] && [ "$response" != "no" -a "$response" != "NO" ];then
+		echo Invalid Entry! : $response
+		echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
+		read response
+	# Qtherwise the entry is acceptable
+	else
+		break
+	fi
+done
+
 ###################################################################
 ###################### Install Dependencies #######################
 ###################################################################
 
-if [ "$response" = no ];then
+# Seriously now, why do I need to refer to response after the or?
+if [ "$response" = "no" -o "$response" = "NO" ];then
 	echo -e "\e[31m****** Quitting!!! ******\e[0m "
 	cd
 	rm -R /tmp/gns3/GNS3-1.2.3.source
 	echo -e "\e[31mFolder removed\e[0m "
+	end=$(date +%s)
+	runtime=$(($end-$start))
+	echo "Total Runtime is "$runtime" sec's"
 	exit 0
 else
-	#echo -en "\e[31mPress Enter Twice ( Y U DO DISS ?) : \e[0m "
-	sleep 3
 	echo -e "\e[31mInstalling Packages, please be patient!\e[0m "
 	# Make sure to run apt-get update !
 	sudo apt-get update
-	sudo apt-get install python3 libpcap-dev uuid-dev libelf-dev cmake python3-setuptools python3-pyqt4 python3-ws4py python3-zmq python3-tornado
+	# Default Y/n prompt to "yes" with y operand
+	sudo apt-get -y install python3 libpcap-dev uuid-dev libelf-dev cmake python3-setuptools python3-pyqt4 python3-ws4py python3-zmq python3-tornado
 	# some sort of problem installing python3-netifaces package
 	# needs to be installed separate
-	sudo apt-get install python3-netifaces
+	sudo apt-get -y install python3-netifaces
 	echo
 	echo -e "\e[32m****** All done installing packages ******\e[0m "
 	sleep 2
@@ -214,7 +238,13 @@ sw_check
 ###################################################################
 ######################## Exiting script ###########################
 ###################################################################
-
+echo
+echo -e "\e[31m****** Don't forget to remove the Working Directory as it is no longer needed! ******\e[0m "
+echo
+end=$(date +%s)
+runtime=$(($end-$start))
+echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+echo
 echo -e "\e[31m****** Exiting from the script! ******\e[0m "
 sleep 2
 exit 0
