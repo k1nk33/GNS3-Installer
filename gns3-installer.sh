@@ -17,7 +17,7 @@ start=$(date +%s)
 distro=$(lsb_release -a 2>/dev/null | grep Description | cut -f2)
 echo $distro
 # If it doesn't match requirements display error
-if [ "$distro" != "Ubuntu 14.04.1 LTS" ];then ###&& [ "$distro" != "Ubuntu 12.04.5 LTS" ];then
+if [[ "$distro" != *"Ubuntu 14.04"* ]];then
 	echo -e "\e[31m********* Error, Wrong Distro **********\e[0m "
 	sleep 1
 	echo 
