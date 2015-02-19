@@ -11,6 +11,88 @@
 start=$(date +%s)
 
 ###################################################################
+###################### Check Arguments ############################
+################### Uninstall if Required #########################
+###################################################################
+
+function uninstaller
+{
+	pip3=$(which pip3)
+	if [ -z "$pip3" ];then
+		echo -e "\e[32m*** Installing Pip ***\e[0m"
+		echo
+		sleep 1
+		sudo apt-get update && sudo apt-get install -y python3-pip
+		echo
+		echo -e "\e[32m*** Continuing ***\e[0m"
+	fi
+	
+	if [ ! -z "$gns" ];then
+		echo -e "\e[31m*** Removing GNS3 ***\e[0m"
+		sudo pip3 uninstall -y gns3-server
+		sudo pip3 uninstall -y gns3-gui
+		sudo rm /usr/local/bin/gns3*
+		sudo rm -r ~/GNS3
+		sudo rm -r ~/.config/GNS3
+		sudo rm /usr/local/lib/python3.4/dist-packages/gns3*.egg
+		sudo rm /usr/share/app-install/icons/gns3.png
+		sudo rm /usr/share/app-install/desktop/gns3:gns3.desktop
+		echo
+		echo -e "\e[32m*** Uninstall GNS3 Complete ***\e[0m"
+		echo
+		echo -e "\e[31m*** Removing Desktop Shortcut! ***\e[0m"
+		echo
+		sudo rm /usr/share/applications/gns3.desktop
+		sudo rm /usr/share/applications/gns3.png
+		echo -e "\e[32m*** Done ***\e[0m"
+		echo
+		echo -e "\e[31m*** Removing VPCS ***\e[0m"
+		sudo rm /usr/bin/vpcs
+		echo
+		echo -e "\e[32m** Done ***\e[0m"
+		echo
+		echo -e "\e[31m*** Removing Dynamips ***\e[0m"
+		echo
+		sudo rm /usr/local/bin/dynamips
+		sudo rm -r /usr/local/share/doc/dynamips
+		sudo rm /usr/local/share/man/man1/dynamips.1
+		echo -e "\e[32m*** All Done ***\e[0m"
+		sleep 1
+		echo -e "\e[32m*****  Exiting  *****\e[0m"
+		echo
+		end=$(date +%s)
+		runtime=$(($end-$start))
+		echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+		exit 0
+	else
+		echo
+		echo -e "\e[31*** Cannot find any packages to uninstall! ***\e[0m"
+		echo
+		echo -e "\e[31m*****  Exiting  *****\e[0m"
+		exit 1
+	fi
+}
+
+# Check arguments for "U" switch and call the uninstaller if found
+if [ "$#" -eq 0 ];then
+	echo -e "\e[32m*** No arguments ***\e[0m"
+else
+	
+	if [ "$1" = "-U" ];then
+		gns=$(which gns3)
+		if [ -n "$gns" ];then
+			echo -e "\e[32m*** Running Uninstaller ***\e[0m"
+			sleep 1			
+			uninstaller
+		else
+			echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
+			exit 0
+		fi
+		
+	fi
+fi
+
+###################################################################
 ###################### Check Requirements #########################
 ###################################################################
 

@@ -16,6 +16,12 @@ execuable by typing "sudo chmod u+x ./gns3-installer.sh".
 Now you can run the script with "sudo ./gns3-installer.sh"
 (sudo may prompt for your password which the script needs to install dependencies and create certain files/directories).
  
+[Uninstall]
+This is still a work in progress so there may be bugs.
+To uninstall run the script with "-U" switch e.g. "sudo ./gns3-installer.sh -U".
+The script will only work if GNS3 is installed and will then remove all packages
+installed by the installer (gns3-server/gui, dynamips & vpcs).
+
 [Once Installed]
 Unfortunately I can't (legally anyway) provide the Cisco IOS images required to emulate Cisco routers.
 My recommendations are not to go crazy downloading every IOS image you come across as that can quickly get out of hand.
