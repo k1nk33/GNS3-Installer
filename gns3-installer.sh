@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script will attempt to install the following software:
+# This script will attempt to install/uninstall the following software:
 # GNS3 Network Simulator
 # Dynamips Router Firmware Emulator
 # VPCs Virtual PC Emulator
@@ -17,40 +17,48 @@ start=$(date +%s)
 
 function uninstaller
 {
+	# If python3-pip is not installed, run apt-get install
 	pip3=$(which pip3)
 	if [ -z "$pip3" ];then
 		echo -e "\e[32m*** Installing Pip ***\e[0m"
 		echo
 		sleep 1
-		sudo apt-get update && sudo apt-get install -y python3-pip
+		# Use pip to uninstall package; Note that pip needs to be upgraded to latest release to work properly
+		sudo apt-get update && sudo apt-get install -y python3-pip && sudo easy_install3 -U pip
 		echo
 		echo -e "\e[32m*** Continuing ***\e[0m"
 	fi
 	
+	# If the gns variable is not empty run the uninstaller on the various packages
 	if [ ! -z "$gns" ];then
 		echo -e "\e[31m*** Removing GNS3 ***\e[0m"
-		sudo pip3 uninstall -y gns3-server
-		sudo pip3 uninstall -y gns3-gui
-		sudo rm /usr/local/bin/gns3*
-		sudo rm -r ~/GNS3
-		sudo rm -r ~/.config/GNS3
-		sudo rm /usr/local/lib/python3.4/dist-packages/gns3*.egg
-		sudo rm /usr/share/app-install/icons/gns3.png
-		sudo rm /usr/share/app-install/desktop/gns3:gns3.desktop
+		# Uninstall GNS3
+		sudo -H pip3 uninstall -y gns3-server
+		sudo -H pip3 uninstall -y gns3-gui
+		# Remove unwanted files associated with GNS3		
+		sudo rm /usr/local/bin/gns3 
+		sudo rm -r ~/GNS3 2>/dev/null
+		sudo rm -r ~/.config/GNS3 2>/dev/null
+		sudo rm -r /usr/local/lib/python3.4/dist-packages/gns3*.egg 2>/dev/null    
+		sudo rm /usr/share/app-install/icons/gns3.png 2>/dev/null
+		sudo rm /usr/share/app-install/desktop/gns3:gns3.desktop 2>/dev/null
 		echo
 		echo -e "\e[32m*** Uninstall GNS3 Complete ***\e[0m"
 		echo
+		# Remove the desktop entry and icon file
 		echo -e "\e[31m*** Removing Desktop Shortcut! ***\e[0m"
 		echo
 		sudo rm /usr/share/applications/gns3.desktop
 		sudo rm /usr/share/applications/gns3.png
 		echo -e "\e[32m*** Done ***\e[0m"
 		echo
+		# Remove the VPCS binary
 		echo -e "\e[31m*** Removing VPCS ***\e[0m"
 		sudo rm /usr/bin/vpcs
 		echo
 		echo -e "\e[32m** Done ***\e[0m"
 		echo
+		# Remove the Dynamips binary and associated files/folders
 		echo -e "\e[31m*** Removing Dynamips ***\e[0m"
 		echo
 		sudo rm /usr/local/bin/dynamips
@@ -63,7 +71,9 @@ function uninstaller
 		end=$(date +%s)
 		runtime=$(($end-$start))
 		echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+		# Exit the script		
 		exit 0
+	# Otherwise GNS3 is not installed, exit the script	
 	else
 		echo
 		echo -e "\e[31*** Cannot find any packages to uninstall! ***\e[0m"
@@ -73,17 +83,22 @@ function uninstaller
 	fi
 }
 
-# Check arguments for "U" switch and call the uninstaller if found
+# Check for arguments, "U" switch will call the uninstaller if found
+# If there are no arguments then continue with the installer
+
 if [ "$#" -eq 0 ];then
 	echo -e "\e[32m*** No arguments ***\e[0m"
+# Otherwise an argument was passed, process the argument
 else
-	
+	# If the argument is equal to U then call then check to see if GNS3 is installed
 	if [ "$1" = "-U" ];then
 		gns=$(which gns3)
+		# If the GNS3 variable is not empty run the uninstaller
 		if [ -n "$gns" ];then
 			echo -e "\e[32m*** Running Uninstaller ***\e[0m"
 			sleep 1			
 			uninstaller
+		# Otherwise exit the script
 		else
 			echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
 			exit 0
@@ -287,28 +302,38 @@ function clean_up
 # Detects if the software has been installed correctly.
 function sw_check
 {
+	# Check for GNS3, returns exit codes!
 	gns=$(which gns3)
+	gns_exit=$?
+	if [ -n "$gns" ];then
+		echo -e "\e[32m****** GNS3 Install Successful! ******\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $gns_exit\e[0m";echo
+	else
+		echo -e "\e[31mError, gns value = $gns\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $gns_exit\e[0m";echo
+	fi
+	
+	# Check for VPCS
 	vpc=$(which vpcs)
+	vpcs_exit=$?
+	if [ -n "$vpc" ];then
+		echo -e "\e[32m****** VPCS Install Successful! ******\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $vpcs_exit\e[0m";echo	
+	else
+		echo -e "\e[31mError, vpcs value = $vpc\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $vpcs_exit\e[0m";echo
+	fi
+
+	# Checks for Dynamips
 	dmips=$(which dynamips)
-	while true; do
-		# As long as the variables return a value other than empty, the programs have installed
-		if [ -n "$gns" ];then
-			echo -e "\e[32m****** GNS3 Install Successful! ******\e[0m ";echo
-			if [ -n "$vpc" ];then
-				echo -e "\e[32m****** VPCS Install Successful! ******\e[0m ";echo
-				if [ -n "$dmips" ];then
-					echo -e "\e[32m****** Dynamips Install Successful! ******\e[0m ";echo
-				else
-					echo -e "\e[31mError, dynamips value = $dmips\e[0m "
-				fi
-			else
-				echo -e "\e[31mError, vpcs value = $vpc\e[0m "
-			fi
-		else
-			echo -e "\e[31mError, gns value = $gns\e[0m "
-		fi
-		break
-	done
+	dyn_exit=$?
+	if [ -n "$dmips" ];then
+		echo -e "\e[32m****** Dynamips Install Successful! ******\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $dyn_exit\e[0m";echo	
+	else
+		echo -e "\e[31mError, dynamips value = $dmips\e[0m ";echo
+		echo -e "\e[31m*** Exit status of command is $dyn_exit\e[0m";echo
+	fi
 }
 
 ###################################################################
