@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 # This script will attempt to install/uninstall the following software:
 # GNS3 Network Simulator
@@ -123,7 +123,7 @@ if [[ "$distro" != *"Ubuntu 14.04"* ]];then
 	end=$(date +%s)
 	runtime=$(($end-$start))
 	echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
-	exit 0
+	exit 2
 fi
 
 # Is it 32/64 bit?
