@@ -28,18 +28,18 @@ function uninstaller
 		echo
 		echo -e "\e[32m*** Continuing ***\e[0m"
 	fi
-	
+
 	# If the gns variable is not empty run the uninstaller on the various packages
 	if [ ! -z "$gns" ];then
 		echo -e "\e[31m*** Removing GNS3 ***\e[0m"
 		# Uninstall GNS3
 		sudo -H pip3 uninstall -y gns3-server
 		sudo -H pip3 uninstall -y gns3-gui
-		# Remove unwanted files associated with GNS3		
-		sudo rm /usr/local/bin/gns3 
+		# Remove unwanted files associated with GNS3
+		sudo rm /usr/local/bin/gns3
 		sudo rm -r ~/GNS3 2>/dev/null
 		sudo rm -r ~/.config/GNS3 2>/dev/null
-		sudo rm -r /usr/local/lib/python3.4/dist-packages/gns3*.egg 2>/dev/null    
+		sudo rm -r /usr/local/lib/python3.4/dist-packages/gns3*.egg 2>/dev/null
 		sudo rm /usr/share/app-install/icons/gns3.png 2>/dev/null
 		sudo rm /usr/share/app-install/desktop/gns3:gns3.desktop 2>/dev/null
 		echo
@@ -71,9 +71,9 @@ function uninstaller
 		end=$(date +%s)
 		runtime=$(($end-$start))
 		echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
-		# Exit the script		
+		# Exit the script
 		exit 0
-	# Otherwise GNS3 is not installed, exit the script	
+	# Otherwise GNS3 is not installed, exit the script
 	else
 		echo
 		echo -e "\e[31*** Cannot find any packages to uninstall! ***\e[0m"
@@ -96,14 +96,14 @@ else
 		# If the GNS3 variable is not empty run the uninstaller
 		if [ -n "$gns" ];then
 			echo -e "\e[32m*** Running Uninstaller ***\e[0m"
-			sleep 1			
+			sleep 1
 			uninstaller
 		# Otherwise exit the script
 		else
 			echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
 			exit 0
 		fi
-		
+
 	fi
 fi
 
@@ -158,48 +158,63 @@ unzip "*.zip"
 rm *.zip
 
 # At this point the files are extracted to their respective folders
-# Request permission to continue installing packages
-echo -e "\e[31mThe script needs to install dependencies\e[0m "
-echo
-echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
-read response
 
-# While loop to validate the response
-while true; do
-	# There has got to be an easier way of writing this!
-	# If the entry doesn't meet requirements, ask again.
-	if [ "$response" != "yes" -a "$response" != "YES" ] && [ "$response" != "no" -a "$response" != "NO" ];then
-		echo Invalid Entry! : $response
-		echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
-		read response
-	# Qtherwise the entry is acceptable
-	else
-		break		
-	fi
-done
 
 ###################################################################
 ###################### Install Dependencies #######################
 ###################################################################
 
-# Seriously now, why do I need to refer to response after the or 
-if [ "$response" = "no" -o "$response" = "NO" ];then
-	echo -e "\e[31m****** Quitting!!! ******\e[0m "
-	cd
-	rm -R /tmp/gns3/GNS3-1.2.3.source
-	echo -e "\e[31mFolder removed\e[0m "
-	exit 0
-else
-	echo -e "\e[31mInstalling Packages, please be patient!\e[0m "
-	# Make sure to run apt-get update !
-	sudo apt-get update
-	# Install requirements, use Y switch to default to yes at prompt!
-	sudo apt-get install -y python3 libpcap-dev uuid-dev libelf-dev cmake python3-setuptools python3-pyqt4 python3-ws4py python3-zmq python3-tornado
-	sudo apt-get install -y python3-netifaces
-	echo
-	echo -e "\e[32m****** All done installing packages ******\e[0m "
-	echo
-fi
+# Request permission to continue installing packages
+echo -e "\e[31mThe script needs to install dependencies\e[0m "
+echo
+
+# While loop to input and validate the response
+while true; do
+
+	# Ask to install dependencies
+	echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
+	read response
+
+	# Match the response through case
+	case $response in
+
+		# If YES/yes
+		[Yy] | [Yy][Ee][Ss])
+			echo "Continuing"
+			echo -e "\e[31mInstalling Packages, please be patient!\e[0m "
+
+			# Make sure to run apt-get update !
+			sudo apt-get update
+			# Install requirements, use Y switch to default to yes at prompt!
+			sudo apt-get install -y python3 libpcap-dev uuid-dev libelf-dev cmake python3-setuptools python3-pyqt4 python3-ws4py python3-zmq python3-tornado
+			sudo apt-get install -y python3-netifaces
+			echo
+			echo -e "\e[32m****** All done installing packages ******\e[0m "
+			echo
+			break
+		;;
+
+		# If NO/no
+		[nN] | [nN][Oo])
+			echo "Exiting Script"
+			cd
+			rm -R /tmp/gns3/GNS3-1.2.3.source
+			echo -e "\e[31mFolder removed\e[0m "
+			echo
+			end=$(date +%s)
+			runtime=$(($end-$start))
+			echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+			exit 0
+		;;
+
+		# Anything else is invalid, repeat menu.
+		*)
+			echo "Invalid Input"
+		;;
+	# Close the case statement
+	esac
+# Close the while loop
+done
 
 ###################################################################
 ######################## Installation Stage #######################
@@ -291,7 +306,7 @@ function create_icon
 function clean_up
 {
 	cd
-	echo -e "\e[31m****** House Cleaning! ******\e[0m " 
+	echo -e "\e[31m****** House Cleaning! ******\e[0m "
 	sudo rm -R /tmp/gns3
 }
 
@@ -312,13 +327,13 @@ function sw_check
 		echo -e "\e[31mError, gns value = $gns\e[0m ";echo
 		echo -e "\e[31m*** Exit status of command is $gns_exit\e[0m";echo
 	fi
-	
+
 	# Check for VPCS
 	vpc=$(which vpcs)
 	vpcs_exit=$?
 	if [ -n "$vpc" ];then
 		echo -e "\e[32m****** VPCS Install Successful! ******\e[0m ";echo
-		echo -e "\e[31m*** Exit status of command is $vpcs_exit\e[0m";echo	
+		echo -e "\e[31m*** Exit status of command is $vpcs_exit\e[0m";echo
 	else
 		echo -e "\e[31mError, vpcs value = $vpc\e[0m ";echo
 		echo -e "\e[31m*** Exit status of command is $vpcs_exit\e[0m";echo
@@ -329,7 +344,7 @@ function sw_check
 	dyn_exit=$?
 	if [ -n "$dmips" ];then
 		echo -e "\e[32m****** Dynamips Install Successful! ******\e[0m ";echo
-		echo -e "\e[31m*** Exit status of command is $dyn_exit\e[0m";echo	
+		echo -e "\e[31m*** Exit status of command is $dyn_exit\e[0m";echo
 	else
 		echo -e "\e[31mError, dynamips value = $dmips\e[0m ";echo
 		echo -e "\e[31m*** Exit status of command is $dyn_exit\e[0m";echo
@@ -353,7 +368,7 @@ function script_exit
 }
 
 # Function calls
-dynamips_install 
+dynamips_install
 vpcs_install & # fork
 gns3_srv_install
 gns3_gui_install
