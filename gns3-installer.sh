@@ -15,6 +15,7 @@ start=$(date +%s)
 ################### Uninstall if Required #########################
 ###################################################################
 
+# Unnstaller Function
 function uninstaller
 {
 	# If python3-pip is not installed, run apt-get install
@@ -33,8 +34,8 @@ function uninstaller
 	if [ ! -z "$gns" ];then
 		echo -e "\e[31m*** Removing GNS3 ***\e[0m"
 		# Uninstall GNS3
-		sudo -H pip3 uninstall -y gns3-server
-		sudo -H pip3 uninstall -y gns3-gui
+		sudo -H pip3 uninstall -y gns3-server 2>/dev/null
+		sudo -H pip3 uninstall -y gns3-gui 2>/dev/null
 		# Remove unwanted files associated with GNS3
 		sudo rm /usr/local/bin/gns3
 		sudo rm -r ~/GNS3 2>/dev/null
@@ -71,6 +72,8 @@ function uninstaller
 		end=$(date +%s)
 		runtime=$(($end-$start))
 		echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
+		# Send System Notification
+		notify-send -t 5000 -u low "Uninstall Complete"
 		# Exit the script
 		exit 0
 	# Otherwise GNS3 is not installed, exit the script
@@ -88,6 +91,7 @@ function uninstaller
 
 if [ "$#" -eq 0 ];then
 	echo -e "\e[32m*** No arguments ***\e[0m"
+
 # Otherwise an argument was passed, process the argument
 else
 	# If the argument is equal to U then call then check to see if GNS3 is installed
@@ -111,10 +115,10 @@ fi
 ###################### Check Requirements #########################
 ###################################################################
 
-distro=$(lsb_release -a 2>/dev/null | grep Description | cut -f2)
+distro=$(lsb_release -a 2>/dev/null | grep Codename | cut -f2)
 echo $distro
 # If it doesn't match requirements display error
-if [[ "$distro" != *"Ubuntu 14.04"* ]];then
+if [[ "$distro" != *"trusty"* ]];then
 	echo -e "\e[31m********* Error, Wrong Distro **********\e[0m "
 	sleep 1
 	echo 
@@ -123,7 +127,7 @@ if [[ "$distro" != *"Ubuntu 14.04"* ]];then
 	end=$(date +%s)
 	runtime=$(($end-$start))
 	echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
-	exit 0
+	exit 2
 fi
 
 # Is it 32/64 bit?
@@ -172,14 +176,14 @@ echo
 while true; do
 
 	# Ask to install dependencies
-	echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[32mno\e[0m \e[31mto\e[0m \e[32mquit : \e[0m "
+	echo -en "\e[31mEnter\e[0m \e[32myes\e[0m \e[31mto\e[0m \e[32mcontinue\e[0m \e[31mor\e[0m \e[93mno\e[0m \e[31mto\e[0m \e[93mquit : \e[0m "
 	read response
 
 	# Match the response through case
 	case $response in
 
 		# If YES/yes
-		[Yy] | [Yy][Ee][Ss])
+		[yY] | [yY][Ee][Ss])
 			echo "Continuing"
 			echo -e "\e[31mInstalling Packages, please be patient!\e[0m "
 
@@ -230,6 +234,8 @@ function dynamips_install
 	echo -e "\e[31m****** Installing Dynamips ******\e[0m "
 	sudo make install
 	echo
+	# Send System Notification
+	notify-send -t 5000 -u low -i $working_directory/dyn.png "Dynamips Installed"
 	echo -e "\e[32m****** Dynamips installed ******\e[0m "
 	echo
 }
@@ -252,10 +258,14 @@ function gns3_gui_install
 	echo -e "\e[31m****** Installing GNS GUI ******\e[0m "
 	sudo python3 setup.py install
 	echo
+	# Send System Notification
+	notify-send -t 5000 -u low -i $working_directory/gns3.png "GNS3 Installed"
 	echo -e "\e[32m****** GNS3 GUI installed ******\e[0m "
 	echo
 	# Create the desktop icon
 	create_icon
+	echo
+
 }
 
 # VPCS Installer function
@@ -274,8 +284,11 @@ function vpcs_install
 
 	# Copy the binary to /usr/bin
 	sudo cp vpcs /usr/bin
-	echo -e "\e[32m****** Virtual PC is installed ******\e[0m "
-	echo -e "\e[32m*** You can execute it from terminal by typing 'vpcs' and hitting enter ***\e[0m "
+	# Send System Notification
+	notify-send -t 5000 -u low -i $working_directory/vpcs.png "VPCS Installed"
+	echo -e "\e[93m****** Virtual PC is installed ******\e[0m "
+	echo
+	echo -e "\e[93m*** You can execute it from terminal by typing 'vpcs' and hitting enter ***\e[0m "
 	echo
 }
 
@@ -294,6 +307,7 @@ function create_icon
 	Categories=Development"
 
 	echo -e "\e[31m****** Creating an Application Icon for GNS3 ******\e[0m "
+	echo
 	sudo cp $working_directory/gns3.png /usr/share/applications
 	echo -e $text > $working_directory/gns3.desktop && sudo mv $working_directory/gns3.desktop /usr/share/applications
 	# Give the file the proper permissions
@@ -307,7 +321,10 @@ function clean_up
 {
 	cd
 	echo -e "\e[31m****** House Cleaning! ******\e[0m "
+	echo
 	sudo rm -R /tmp/gns3
+	# Send System Notification
+	notify-send -t 5000 -u low "Cleanup Complete"
 }
 
 ###################################################################
