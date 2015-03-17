@@ -8,7 +8,7 @@
 # As of this time only Ubunutu 14.04 ( or trusty derivatives ) are accepted.
 # If your distro uses apt package manager, and you want to attempt to use the script, you need
 # to edit the script. To do this run "lsb_release -a 2>/dev/null | grep Codename | cut -f2"
-# in your terminal and then replace "trusty" ( on line 423 ) with the output from the command.
+# in your terminal and then replace "trusty" ( on line 426 ) with the output from the command.
 # Absolutely no guarantees it will work though.
 
 #-----------------------------------------------------------------#
