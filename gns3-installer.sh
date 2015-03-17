@@ -8,7 +8,7 @@
 # As of this time only Ubunutu 14.04 ( or trusty derivatives ) are accepted.
 # If your distro uses apt package manager, and you want to attempt to use the script, you need
 # to edit the script. To do this run "lsb_release -a 2>/dev/null | grep Codename | cut -f2"
-# in your terminal and then replace "trusty" ( on line 417 ) with the output from the command.
+# in your terminal and then replace "trusty" ( on line 423 ) with the output from the command.
 # Absolutely no guarantees it will work though.
 
 #-----------------------------------------------------------------#
@@ -115,7 +115,6 @@ function vpcs_install {
 
 
 
-
 #-----------------------------------------------------------------#
 
 ###################################################################
@@ -137,7 +136,7 @@ function vpcs_install {
 function gns3_uninstall {
 	gns3=$(which gns3)
 	pip3=$(which pip3)
-	
+
 	# As long as GNS3 is installed, download and install Pip for the removal procedure
 	if [[ -z "$pip3" && -n "$gns3" ]]; then
 		echo -e "\e[32m*** Installing Pip ***\e[0m"
@@ -148,7 +147,7 @@ function gns3_uninstall {
 		echo
 		echo -e "\e[32m*** Continuing ***\e[0m"
 	fi
-	
+
 	# If GNS 3 is installed, continue. Otherwise exit
 	if [[ -n "$gns3" ]]; then
 		echo -e "\e[31m*** Removing GNS3 ***\e[0m"
@@ -173,7 +172,6 @@ function gns3_uninstall {
 		sudo rm /usr/share/applications/gns3.desktop
 		sudo rm /usr/share/applications/gns3.png
 		echo -e "\e[32m*** Done ***\e[0m"
-		notify-send -t 4000 -u low "GNS3 Uninstall Complete"; sleep 1
 		echo
 	else
 		echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
@@ -182,7 +180,7 @@ function gns3_uninstall {
 
 function dyn_uninstall {
 	dyn=$(which dynamips)
-	
+
 	# If Dynamips is installed, continue. Otherwise exit
 	if [[ -n "$dyn" ]]; then
 		# Remove the Dynamips binary and associated files/folders
@@ -194,13 +192,11 @@ function dyn_uninstall {
 		echo -e "\e[32m*** All Done ***\e[0m"
 		sleep 1
 		echo -e "\e[32m***  Exiting  ***\e[0m"
-		notify-send -t 4000 -u low "Dynamips Uninstall Complete"; sleep 1
 		echo
-	else 	
+	else
 		echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
 	fi
 }
-
 
 function vpcs_uninstall {
 	vpcs=$(which vpcs)
@@ -212,7 +208,6 @@ function vpcs_uninstall {
 		sudo rm /usr/bin/vpcs
 		echo
 		echo -e "\e[32m** Done ***\e[0m"
-		notify-send -t 4000 -u low "VPCS Uninstall Complete"; sleep 1
 		echo
 	else
 		echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
@@ -283,6 +278,7 @@ function sw_check {
 	fi
 }
 
+
 #-----------------------------------------------------------------#
 
 ###################################################################
@@ -343,48 +339,58 @@ if [ "$#" -eq 0 ]; then
 # Otherwise an argument was passed, process the argument
 else
 	# If the argument is equal to U then run the uninstaller menu
-	if [ "$1" = "-U" ]; then	
+	if [ "$1" = "-U" ]; then
 		while true;
 		do
-			echo "Choose which packages you wish to remove :"
-			echo "[A]ll" echo
-			echo "[D]ynamips" echo
-			echo "[V]pcs" echo
-			echo "[G]NS3" echo
-			echo "[Q]uit" echo
+			echo "Choose which packages you wish to remove :" ;echo
+			echo "[A]ll"
+			echo "[D]ynamips"
+			echo "[V]pcs"
+			echo "[G]NS3"
+			echo "[Q]uit" ;echo
 			read choice
-			
+
 			# Match the response through case
-			case $choice in 
+			case $choice in
 
 				[Aa])   # If user chooses All
 					start=$(date +%s)
 					gns3_uninstall
+					notify-send -t 4000 -u low "GNS3 Uninstall Complete"; sleep 1
 					dyn_uninstall
+					notify-send -t 4000 -u low "Dynamips Uninstall Complete"; sleep 1
 					vpcs_uninstall
+					notify-send -t 4000 -u low "VPCS Uninstall Complete"; sleep 1
 					end=$(date +%s)
 					runtime=$(($end-$start))
+					echo "took $runtime seconds"
 					exit 0
 				;;
 				[Dd])   # If user chooses Dynampis
 					start=$(date +%s)
 					dyn_uninstall
+					notify-send -t 4000 -u low "Dynamips Uninstall Complete"
 					end=$(date +%s)
 					runtime=$(($end-$start))
+					echo "took $runtime seconds"
 					continue
 				;;
 				[Vv])   # If user chooses VPCS
 					start=$(date +%s)
 					vpcs_uninstall
+					notify-send -t 4000 -u low "VPCS Uninstall Complete"
 					end=$(date +%s)
 					runtime=$(($end-$start))
+					echo "took $runtime seconds"
 					continue
 				;;
 				[Gg])   # If user chooses GNS3
 					start=$(date +%s)
 					gns3_uninstall
+					notify-send -t 4000 -u low "GNS3 Uninstall Complete"
 					end=$(date +%s)
 					runtime=$(($end-$start))
+					echo "took $runtime seconds"
 					continue
 				;;
 				[Qq])   # If user chooses Quit
@@ -538,7 +544,7 @@ done
 
 
 # Array to hold the function calls
-declare -a progs=( 'dynamips_install' 'vpcs_install' 'gns3_srv_install' 'gns3_gui_install' 'create_icon' 'clean_up' 'sw_check' 'script_exit' )
+declare -a progs=( 'dynamips_install' 'vpcs_install' 'gns3_srv_install' 'gns3_gui_install' 'create_icon' 'clean_up' 'sw_check' 'script_exit')
 
 # For loop to process the functions
 for i in "${progs[@]}"; do
