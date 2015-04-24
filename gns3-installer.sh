@@ -191,7 +191,7 @@ function dyn_uninstall {
 		sudo rm /usr/local/share/man/man1/dynamips.1
 		echo -e "\e[32m*** All Done ***\e[0m"
 		sleep 1
-		echo -e "\e[32m***  Exiting  ***\e[0m"
+		#echo -e "\e[32m***  Exiting  ***\e[0m"
 		echo
 	else
 		echo -e "\e[31m*** Nothing to Uninstall ***\e[0m"
