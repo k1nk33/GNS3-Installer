@@ -405,7 +405,7 @@ else
 		done
 	else
 		echo "Error, Invalid Argument "$1" "
-		exit 2			
+		exit 1			
 	fi
 fi
 
@@ -432,7 +432,7 @@ if [[ "$distro" != *"trusty"* ]]; then
 	end=$(date +%s)
 	runtime=$(($end-$start))
 	echo -e "\e[32m****** Total Runtime is "$runtime" sec's ******\e[0m"
-	exit 2
+	exit 1
 fi
 
 # Is it 32/64 bit?
