@@ -20,10 +20,8 @@ Now you can run the script with "sudo ./gns3-installer.sh"
  
 [Uninstall]
 
-This is still a work in progress so there may be bugs.
 To uninstall run the script with "-U" switch e.g. "sudo ./gns3-installer.sh -U".
-The script will only work if GNS3 is installed and will then remove all packages
-installed by the installer (gns3-server/gui, dynamips & vpcs).
+You'll be presented with a menu that lets you choose which packages you'd like to remove. Only the packages that the script installs are up for grabs here, so Dynamips, VPCS and the GNS3 software can be removed using the uninstaller.
 
 [Once Installed]
 
